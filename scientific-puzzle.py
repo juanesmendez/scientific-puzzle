@@ -742,6 +742,7 @@ def juego(tam, serie, modo):
                     print("SE CLIQUEO NUEVO JUEGOOOOO")
                     board = createBoard(serie, tam, tam)  # Retorna la matriz de numeros
                     start_time = time.time()
+                    show_solution = False
 
                 solucion = pygame.font.Font('freesansbold.ttf', 25)
                 TextSurf, TextRect = text_objects("Mostrar solución", solucion)
