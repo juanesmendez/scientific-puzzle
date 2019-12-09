@@ -467,6 +467,34 @@ def oprimidomodo(x, y, w, h, ic, modo, action=None): # De parametros se tiene la
     return modo
 
 
+def getBlankPosition(board):
+    # Return the x and y of board coordinates of the blank space.
+    for x in range(len(board)):
+        for y in range(len(board[0])):
+            if board[x][y] == None:
+                return (x, y)
+
+
+def getLeftTopOfTile(tileX, tileY):
+    left = BOARDX + (tileX * TILESIZE) + (tileX - 1)
+    top = BOARDY + (tileY * TILESIZE) + (tileY - 1)
+
+    return (left, top)
+
+
+def getSpotClicked(board, x, y):
+    # from the x & y pixel coordinates, get the x & y board coordinates
+    for tileX in range(len(board)):
+        for tileY in range(len(board[0])):
+            left, top = getLeftTopOfTile(tileX, tileY)
+            print(left, top)
+            tileRect = pygame.Rect(left, top, TILESIZE, TILESIZE)
+            if tileRect.collidepoint(x, y):
+                return (tileX, tileY)
+
+    return (None, None)
+
+
 # Función de la pantalla de inicio. Contiene todas las instrucciones para dibujar la pantalla de inicio
 def game_intro():
     intro = True
@@ -636,6 +664,26 @@ def juego(tam, serie, modo):
                 running = False
                 sys: exit()
 
+            if event.type == pygame.MOUSEBUTTONUP:
+                print("Mouse event")
+                spotx, spoty = getSpotClicked(board, event.pos[0], event.pos[1])
+                print(spotx, spoty)
+                blankx, blanky = getBlankPosition(board)
+                print(blankx, blanky)
+
+                if spotx == blankx + 1 and spoty == blanky:
+                    slide_to = LEFT
+                    make_move(board, slide_to)
+                elif spotx == blankx - 1 and spoty == blanky:
+                    slide_to = RIGHT
+                    make_move(board, slide_to)
+                elif spotx == blankx and spoty == blanky + 1:
+                    slide_to = UP
+                    make_move(board, slide_to)
+                elif spotx == blankx and spoty == blanky - 1:
+                    slide_to = DOWN
+                    make_move(board, slide_to)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and is_valid_move(board, LEFT):
                     print("Movimiento valido LEFT")
@@ -690,6 +738,10 @@ def juego(tam, serie, modo):
                 TextRect.center = (250 + (230 / 2), 50 + (50 / 2))
                 DISP.blit(TextSurf, TextRect)
                 oprimido(250, 50, 230, 50, Blanco, tam, serie, modo, "nuevojuego")  # Para que el boton funcione al ser oprimido
+                if oprimido(250, 50, 230, 50, Blanco, tam, serie, modo, action="nuevojuego"):
+                    print("SE CLIQUEO NUEVO JUEGOOOOO")
+                    board = createBoard(serie, tam, tam)  # Retorna la matriz de numeros
+                    start_time = time.time()
 
                 solucion = pygame.font.Font('freesansbold.ttf', 25)
                 TextSurf, TextRect = text_objects("Mostrar solución", solucion)
