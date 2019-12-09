@@ -476,8 +476,8 @@ def getBlankPosition(board):
 
 
 def getLeftTopOfTile(tileX, tileY):
-    left = BOARDX + (tileX * TILESIZE) + (tileX - 1)
-    top = BOARDY + (tileY * TILESIZE) + (tileY - 1)
+    left = (BOARDX/2) + (tileX * TILESIZE) - 1
+    top = (BOARDY/2) + (tileY * TILESIZE) - 1
 
     return (left, top)
 
@@ -487,7 +487,8 @@ def getSpotClicked(board, x, y):
     for tileX in range(len(board)):
         for tileY in range(len(board[0])):
             left, top = getLeftTopOfTile(tileX, tileY)
-            print(left, top)
+            #print(left, top)
+            #print(f"x={x}, y={y} ")
             tileRect = pygame.Rect(left, top, TILESIZE, TILESIZE)
             if tileRect.collidepoint(x, y):
                 return (tileX, tileY)
@@ -666,21 +667,25 @@ def juego(tam, serie, modo):
 
             if event.type == pygame.MOUSEBUTTONUP:
                 print("Mouse event")
-                spotx, spoty = getSpotClicked(board, event.pos[0], event.pos[1])
+                spoty, spotx = getSpotClicked(board, event.pos[0], event.pos[1])
                 print(spotx, spoty)
                 blankx, blanky = getBlankPosition(board)
                 print(blankx, blanky)
 
-                if spotx == blankx + 1 and spoty == blanky:
+                if spotx == blankx and spoty == blanky + 1:
+                    print("Movimiento valido LEFT")
                     slide_to = LEFT
                     make_move(board, slide_to)
-                elif spotx == blankx - 1 and spoty == blanky:
+                elif spotx == blankx and spoty == blanky - 1:
+                    print("Movimiento valido RIGHT")
                     slide_to = RIGHT
                     make_move(board, slide_to)
-                elif spotx == blankx and spoty == blanky + 1:
+                elif spotx == blankx + 1 and spoty == blanky:
+                    print("Movimiento valido UP")
                     slide_to = UP
                     make_move(board, slide_to)
-                elif spotx == blankx and spoty == blanky - 1:
+                elif spotx == blankx -1 and spoty == blanky:
+                    print("Movimiento valido DOWN")
                     slide_to = DOWN
                     make_move(board, slide_to)
 
@@ -739,7 +744,6 @@ def juego(tam, serie, modo):
                 DISP.blit(TextSurf, TextRect)
                 oprimido(250, 50, 230, 50, Blanco, tam, serie, modo, "nuevojuego")  # Para que el boton funcione al ser oprimido
                 if oprimido(250, 50, 230, 50, Blanco, tam, serie, modo, action="nuevojuego"):
-                    print("SE CLIQUEO NUEVO JUEGOOOOO")
                     board = createBoard(serie, tam, tam)  # Retorna la matriz de numeros
                     start_time = time.time()
                     show_solution = False
@@ -750,7 +754,6 @@ def juego(tam, serie, modo):
                 DISP.blit(TextSurf, TextRect)
                 #oprimido(550, 150, 230, 50, Blanco, tam, serie, modo, "solu")
                 if oprimido(550, 50, 230, 50, Blanco, tam, serie, modo, action="solu"):
-                    print("SE CLIQUEO SOLUCIOOOOOOON")
                     board = getSolution(serie, tam, tam)
                     show_solution = True
 
