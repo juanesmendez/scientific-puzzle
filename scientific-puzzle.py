@@ -189,7 +189,7 @@ def checkSolved(board):
     aux = -1
     for i in range(0, len(board)):
         for j in range(0, len(board[0])):
-            print(board[i][j])
+            #print(board[i][j])
             if board[i][j] == None:
                 continue
             if board[i][j] < aux:
@@ -198,6 +198,25 @@ def checkSolved(board):
 
     return True
 
+
+def getSolution(serie, boardrows, boardcols):
+    numbers = getSeriesNumbers(serie, boardrows, boardcols)
+    counter = 0
+    board = []
+    max = -1
+    maxpos = (-1, -1)
+    for x in range(boardrows):
+        column = []
+        for y in range(boardcols):
+            if numbers[counter] >= max:
+                max = numbers[counter]
+                maxpos = (x, y)
+            column.append(numbers[counter])
+            counter += 1
+        board.append(column)
+
+    board[maxpos[0]][maxpos[1]] = None
+    return board
 
 def createBoard(serie, boardrows, boardcols):
 
@@ -296,6 +315,8 @@ def text_objects(text, font):
 
 # Función para que funcionen los botones
 def oprimido(x, y, w, h, ic, tam, serie, modo, action=None): # De parametros se tiene las cordenadas, el color y la palabra clave que indica la acción
+    # print("ADENTRO DE FUNCION OPRIMIDO")
+    # print("Action:", action)
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y: # Revisa si el mouse está sobre el botón
@@ -313,6 +334,9 @@ def oprimido(x, y, w, h, ic, tam, serie, modo, action=None): # De parametros se 
             if action == "sol":
                 return True
 
+            if action == "solu":
+                print("ADENTRO DE ACTION SOLU IF")
+                return True
             # Si se seleccionan los tamaños
             if action == "cinco":
                 return True
@@ -594,12 +618,13 @@ def game_intro():
 def juego(tam, serie, modo):
 
     board = createBoard(serie, tam, tam)  # Retorna la matriz de numeros
-    print("Tamaño:", tam)
-    print("Serie:", serie)
-    print("Modo:", modo)
+    # print("Tamaño:", tam)
+    # print("Serie:", serie)
+    # print("Modo:", modo)
     running = True
     resuelto = False
     timeOver = False
+    show_solution = False
     start_time = time.time()
 
     while running:
@@ -633,13 +658,13 @@ def juego(tam, serie, modo):
         if slide_to:
             make_move()
         '''
-        print(board)
-        print(type(board))
+        #print(board)
+        #print(type(board))
 
         if resuelto == False:
             if timeOver == False:
                 elapsed_time = time.time() - start_time
-                print("TIEMPO:", elapsed_time)
+                #print("TIEMPO:", elapsed_time)
 
                 board_surface = create_board_surface(tam)
                 # Dibuja las tiles en el surface del board:
@@ -647,8 +672,9 @@ def juego(tam, serie, modo):
                 # Dibuja el surface del board en la pantalla:
                 drawBoardSurface(DISP, board_surface, BOARDX / 2, BOARDY / 2)
                 # Chequea si se resolvió el juego:
-                resuelto = checkSolved(board)
-                print("Resuelto?", resuelto)
+                if show_solution == False:
+                    resuelto = checkSolved(board)
+                #print("Resuelto?", resuelto)
 
                 pygame.draw.rect(DISP, Naranja, (250, 50, 230, 50))
                 pygame.draw.rect(DISP, Naranja, (550, 50, 230, 50))
@@ -663,7 +689,12 @@ def juego(tam, serie, modo):
                 TextSurf, TextRect = text_objects("Mostrar solución", solucion)
                 TextRect.center = (550 + (230 / 2), 50 + (50 / 2))
                 DISP.blit(TextSurf, TextRect)
-                oprimido(550, 150, 230, 50, Blanco, tam, serie, modo, "solu")
+                #oprimido(550, 150, 230, 50, Blanco, tam, serie, modo, "solu")
+                if oprimido(550, 50, 230, 50, Blanco, tam, serie, modo, action="solu"):
+                    print("SE CLIQUEO SOLUCIOOOOOOON")
+                    board = getSolution(serie, tam, tam)
+                    show_solution = True
+
 
                 if serie == 1:
                     a = pygame.font.Font('freesansbold.ttf', 17)
@@ -740,10 +771,11 @@ def juego(tam, serie, modo):
                 TextRect.center = (ancho / 2, alto / 2)
                 DISP.blit(TextSurf, TextRect)
         else:
-            m = pygame.font.Font('freesansbold.ttf', 17)
-            TextSurf, TextRect = text_objects("Felicidades! Ganaste el juego!", m)
-            TextRect.center = (ancho/2, alto/2)
-            DISP.blit(TextSurf, TextRect)
+            if show_solution == False:
+                m = pygame.font.Font('freesansbold.ttf', 17)
+                TextSurf, TextRect = text_objects("Felicidades! Ganaste el juego!", m)
+                TextRect.center = (ancho/2, alto/2)
+                DISP.blit(TextSurf, TextRect)
 
         pygame.display.update()
 
