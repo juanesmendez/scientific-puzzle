@@ -674,6 +674,12 @@ def juego(tam, serie, modo):
                 # Chequea si se resolvió el juego:
                 if show_solution == False:
                     resuelto = checkSolved(board)
+                else:
+                    # Dibujar el letrero "SOLUCION:"
+                    solution_sign = pygame.font.Font('freesansbold.ttf', 17)
+                    solution_text = solution_sign.render("SOLUCION:", True, (0, 255, 0))
+                    DISP.blit(solution_text, (130, 130))
+
                 #print("Resuelto?", resuelto)
 
                 pygame.draw.rect(DISP, Naranja, (250, 50, 230, 50))
@@ -772,10 +778,15 @@ def juego(tam, serie, modo):
                 DISP.blit(TextSurf, TextRect)
         else:
             if show_solution == False:
-                m = pygame.font.Font('freesansbold.ttf', 17)
-                TextSurf, TextRect = text_objects("Felicidades! Ganaste el juego!", m)
-                TextRect.center = (ancho/2, alto/2)
-                DISP.blit(TextSurf, TextRect)
+                congrats_sign = pygame.font.Font('freesansbold.ttf', 50)
+                congrats_text = congrats_sign.render("Felicidades! Ganaste el juego!", True, (0, 255, 0))
+                DISP.blit(congrats_text, (ancho/2 - 340, alto/2 - 100))
+
+
+                # m = pygame.font.Font('freesansbold.ttf', 17)
+                # TextSurf, TextRect = text_objects("Felicidades! Ganaste el juego!", m)
+                # TextRect.center = (ancho/2, alto/2)
+                # DISP.blit(TextSurf, TextRect)
 
         pygame.display.update()
 
